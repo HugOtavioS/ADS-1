@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Regressão Linear</title>
+</head>
+<body>
+    <h1>Regressão Linear</h1>
+    <form id="regressionForm">
+        <label for="input">Digite o valor para previsão:</label>
+        <input type="number" id="input" name="input">
+        <button type="submit">Prever</button>
+    </form>
+    <div id="result"></div>
+    <div id="chartContainer"></div>
+
+    <script>
+        document.getElementById('regressionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputValue = parseFloat(document.getElementById('input').value);
+            const inputData = { input: inputValue };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(inputData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('result').innerHTML = `Previsão: ${data.prediction}`;
+                const chartContainer = document.getElementById('chartContainer');
+                const img = document.createElement('img');
+                img.src = `data:image/png;base64, ${data.plot}`;
+                chartContainer.innerHTML = '';
+                chartContainer.appendChild(img);
+            });
+        });
+    </script>
+</body>
+</html>
